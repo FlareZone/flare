@@ -1,6 +1,26 @@
 import AppearanceSwitch from "@/components/part/appearance-switch"
 import LanguageSwitch from "@/components/part/language-switch"
+import {
+	ConnectButton,
+	ConnectKitProvider,
+	createWagmiConfig,
+} from "@crossbell/connect-kit"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
+import { WagmiConfig } from "wagmi"
+
+const queryClient = new QueryClient()
+const wagmiConfig = createWagmiConfig({ appName: "Crossbell Dev" })
+
+export const Wallet = () => (
+	<ConnectButton>
+		{(status, { connect, disconnect }) => (
+			<button onClick={status.isConnected ? disconnect : connect}>
+				{status.isConnected ? "Disconnect" : "Connect"}
+			</button>
+		)}
+	</ConnectButton>
+)
 
 export default function App() {
 	const { t } = useTranslation()
@@ -14,7 +34,7 @@ export default function App() {
 				<img
 					className="hover: cursor-pointer"
 					style={{ width: 64, height: 64 }}
-					src={"/public/logo.png"}
+					src={"/logo.png"}
 					alt="Flare Dapp"
 				/>
 				<div className="hover: cursor-pointer">Home</div>
@@ -29,7 +49,15 @@ export default function App() {
 						Dashboard
 					</a>
 				</div>
-				<div className="hover: cursor-pointer">Prefile</div>
+				<div className="hover: cursor-pointer">
+					<QueryClientProvider client={queryClient}>
+						<WagmiConfig config={wagmiConfig}>
+							<ConnectKitProvider>
+								<Wallet />
+							</ConnectKitProvider>
+						</WagmiConfig>
+					</QueryClientProvider>
+				</div>
 			</div>
 			<div className="flex flex-col p-xy gap-4xl">
 				<div>Create Post</div>
