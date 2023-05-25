@@ -4,7 +4,14 @@ import {
 	ConnectButton,
 	ConnectKitProvider,
 	createWagmiConfig,
+	useIsConnected
 } from "@crossbell/connect-kit"
+import {
+	NotificationModal,
+	useShowNotificationModal
+} from "@crossbell/notification"
+import { CharacterAvatar } from "@crossbell/ui"
+import { extractCharacterName } from "@crossbell/util-metadata"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { WagmiConfig } from "wagmi"
@@ -12,13 +19,32 @@ import { WagmiConfig } from "wagmi"
 const queryClient = new QueryClient()
 const wagmiConfig = createWagmiConfig({ appName: "Crossbell Dev" })
 
+export function NotificationBtn() {
+	const isConnected = useIsConnected()
+	const show = useShowNotificationModal()
+
+	if (!isConnected) return null
+
+	return <button onClick={show}>Notifications</button>
+}
+
 export const Wallet = () => (
 	<ConnectButton>
-		{(status, { connect, disconnect }) => (
-			<button onClick={status.isConnected ? disconnect : connect}>
-				{status.isConnected ? "Disconnect" : "Connect"}
-			</button>
-		)}
+		{(status, { connect, selectCharacters }) => {
+			if (status.isConnected) {
+				const { character } = status.account
+				const displayName =
+					extractCharacterName(character) ?? status.displayAddress
+				return (
+					<button onClick={selectCharacters} className="flex gap-1">
+						<CharacterAvatar size="24px" character={character} />
+						{displayName}
+					</button>
+				)
+			} else {
+				return <button onClick={connect}>Connect</button>
+			}
+		}}
 	</ConnectButton>
 )
 
@@ -53,7 +79,11 @@ export default function App() {
 					<QueryClientProvider client={queryClient}>
 						<WagmiConfig config={wagmiConfig}>
 							<ConnectKitProvider>
-								<Wallet />
+								<NotificationModal />
+								<div className="flex flex-row gap-4">
+									<NotificationBtn />
+									<Wallet />
+								</div>
 							</ConnectKitProvider>
 						</WagmiConfig>
 					</QueryClientProvider>
