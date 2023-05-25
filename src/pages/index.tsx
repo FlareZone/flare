@@ -3,13 +3,8 @@ import LanguageSwitch from "@/components/part/language-switch"
 import {
 	ConnectButton,
 	ConnectKitProvider,
-	createWagmiConfig,
-	useIsConnected
+	createWagmiConfig
 } from "@crossbell/connect-kit"
-import {
-	NotificationModal,
-	useShowNotificationModal
-} from "@crossbell/notification"
 import { CharacterAvatar } from "@crossbell/ui"
 import { extractCharacterName } from "@crossbell/util-metadata"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
@@ -18,15 +13,6 @@ import { WagmiConfig } from "wagmi"
 
 const queryClient = new QueryClient()
 const wagmiConfig = createWagmiConfig({ appName: "Crossbell Dev" })
-
-export function NotificationBtn() {
-	const isConnected = useIsConnected()
-	const show = useShowNotificationModal()
-
-	if (!isConnected) return null
-
-	return <button onClick={show}>Notifications</button>
-}
 
 export const Wallet = () => (
 	<ConnectButton>
@@ -79,9 +65,7 @@ export default function App() {
 					<QueryClientProvider client={queryClient}>
 						<WagmiConfig config={wagmiConfig}>
 							<ConnectKitProvider>
-								<NotificationModal />
 								<div className="flex flex-row gap-4">
-									<NotificationBtn />
 									<Wallet />
 								</div>
 							</ConnectKitProvider>
