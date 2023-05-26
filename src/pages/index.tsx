@@ -193,7 +193,6 @@ export default function App() {
 					<IconParkOutlineArrowLeft />
 					<ClaimBtn />
 					<CSBDetailBtn />
-					<NewPost />
 				</div>
 				<ul className="flex gap-8xl justify-start">
 					<li>Best</li>
