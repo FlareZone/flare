@@ -21,6 +21,8 @@
 		"@tanstack/query-core": "^4.29.7",
 		"@tanstack/react-query": "^4.29.7",
 		"@unocss/reset": "^0.51.13",
+		"@wangeditor/editor": "^5.1.23",
+		"@wangeditor/editor-for-react": "^1.0.6",
 		"class-variance-authority": "^0.6.0",
 		"clsx": "^1.2.1",
 		"crossbell": "^1.2.0",
