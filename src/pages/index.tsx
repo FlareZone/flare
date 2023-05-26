@@ -1,11 +1,14 @@
 import AppearanceSwitch from "@/components/part/appearance-switch"
 import LanguageSwitch from "@/components/part/language-switch"
+import { ClaimBtn } from "@/pages/ClaimBtn"
 import {
 	ConnectButton,
 	ConnectKitProvider,
-	createWagmiConfig
+	createWagmiConfig,
+	useCsbDetailModal,
+	useIsConnected,
 } from "@crossbell/connect-kit"
-import { CharacterAvatar } from "@crossbell/ui"
+import { CharacterAvatar, SettingsMyCharacterIcon } from "@crossbell/ui"
 import { extractCharacterName } from "@crossbell/util-metadata"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
@@ -22,9 +25,33 @@ export const Wallet = () => (
 				const displayName =
 					extractCharacterName(character) ?? status.displayAddress
 				return (
-					<button onClick={selectCharacters} className="flex gap-1">
+					<button onClick={selectCharacters} className="flex gap-1 hidden">
 						<CharacterAvatar size="24px" character={character} />
-						{displayName}
+						<div
+							className="font-mono"
+							style={{
+								width: "100px",
+								whiteSpace: "nowrap",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+							}}
+						>
+							{displayName.length > 8 ? (
+								<div
+									className="w-full flex overflow-hidden"
+									style={{ height: "36px" }}
+								>
+									<span className="dark:block text-truncate">
+										{displayName.slice(0, -4)}
+									</span>
+									<span className="dark:block" style={{ whiteSpace: "nowrap" }}>
+										{displayName.slice(-4)}
+									</span>
+								</div>
+							) : (
+								displayName
+							)}
+						</div>
 					</button>
 				)
 			} else {
@@ -34,6 +61,39 @@ export const Wallet = () => (
 	</ConnectButton>
 )
 
+export function CSBDetailBtn() {
+	const isConnected = useIsConnected()
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { isActive, show, hide } = useCsbDetailModal()
+
+	if (!isConnected) return null
+
+	return (
+		<SettingsMyCharacterIcon onClick={show}>CSB Detail</SettingsMyCharacterIcon>
+	)
+}
+
+export function IconParkOutlineArrowLeft(props: any) {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="1em"
+			height="1em"
+			viewBox="0 0 48 48"
+			{...props}
+		>
+			<path
+				fill="none"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="4"
+				d="M5.799 24h36m-24 12l-12-12l12-12"
+			></path>
+		</svg>
+	)
+}
+
 export default function App() {
 	const { t } = useTranslation()
 
@@ -41,7 +101,11 @@ export default function App() {
 		<div className="flex flex-col gap-4 items-start font-mono text-size-lg p-2">
 			<div
 				className="flex flex-row gap-4 items-start w-full justify-between items-center"
-				style={{ padding: "0 1rem 0 1rem" }}
+				style={{
+					padding: "0 1rem 0 1rem",
+					borderBottom: "1px solid #e5e7eb",
+					backgroundColor: "transparent",
+				}}
 			>
 				<img
 					className="hover: cursor-pointer"
@@ -50,7 +114,7 @@ export default function App() {
 					alt="Flare Dapp"
 				/>
 				<div className="hover: cursor-pointer">Home</div>
-				<div>Search</div>
+				<div className="hover: cursor-pointer">Search</div>
 				<div className="flex flex-row gap-4">
 					<h1>{t("language")}</h1>
 					<LanguageSwitch />
@@ -73,16 +137,56 @@ export default function App() {
 					</QueryClientProvider>
 				</div>
 			</div>
-			<div className="flex flex-col p-xy gap-4xl">
-				<div>Create Post</div>
+			<div
+				className="flex flex-col p-xy gap-4xl"
+				style={{
+					padding: "0 1rem 0 0",
+					borderBottom: "1px solid #e5e7eb",
+					backgroundColor: "transparent",
+				}}
+			>
+				<div
+					className="hover: cursor-pointer flex items-center gap-xs"
+					style={{
+						padding: "0 1rem 0 0",
+						borderBottom: "1px solid #e5e7eb",
+						backgroundColor: "transparent",
+					}}
+				>
+					<input
+						className="font-mono"
+						placeholder="Create post"
+						style={{
+							height: "38px",
+							border: "1px solid #e5e7eb",
+							backgroundColor: "#F6F7F8",
+							borderRadius: "4px",
+							color: "#1c1c1c",
+							boxShadow: "none",
+							outline: "none",
+							padding: "0 1rem",
+							fontSize: "14px",
+						}}
+					></input>
+					<IconParkOutlineArrowLeft />
+					<ClaimBtn />
+					<CSBDetailBtn />
+				</div>
 				<ul className="flex gap-8xl justify-start">
 					<li>Best</li>
 					<li>Hot</li>
 					<li>New</li>
-					<li>Top</li>
-					<li>Rising</li>
 				</ul>
-				<div style={{ position: "fixed", bottom: 0, width: "100%" }}>
+				<div
+					style={{
+						position: "fixed",
+						bottom: "0.5rem",
+						width: "100%",
+						padding: "0 1rem 0 0",
+						borderBottom: "1px solid #e5e7eb",
+						backgroundColor: "transparent",
+					}}
+				>
 					LIVE DATA ACTIVE
 				</div>
 			</div>
