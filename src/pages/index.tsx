@@ -7,13 +7,14 @@ import {
 	createWagmiConfig,
 	useCsbDetailModal,
 	useIsConnected,
+	usePostNote,
 } from "@crossbell/connect-kit"
 import { CharacterAvatar, SettingsMyCharacterIcon } from "@crossbell/ui"
 import { extractCharacterName } from "@crossbell/util-metadata"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { WagmiConfig } from "wagmi"
-import { usePostNote } from "@crossbell/connect-kit";
 
 const queryClient = new QueryClient()
 const wagmiConfig = createWagmiConfig({ appName: "Crossbell Dev" })
@@ -95,29 +96,50 @@ export function IconParkOutlineArrowLeft(props: any) {
 	)
 }
 
-export function NewPost() {
-	const postNote = usePostNote();
+export function NewPost(props: any) {
+	const postNote = usePostNote()
 
 	return (
 		<button
 			onClick={() => {
 				postNote.mutate({
 					metadata: {
-						content: "Hello Word!",
-						sources: ["Crossbell Dev"],
-						external_urls: ["https://crossbell.io"],
-						tags: ["post"],
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+						title: props.title,
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+						content: props.content,
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+						sources: props.sources,
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+						external_urls: props.external_urls,
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+						tags: props.tags,
 					},
-				});
+				})
 			}}
 		>
-			Post Note
+			<IconParkOutlineArrowLeft />
 		</button>
-	);
+	)
 }
 
 export default function App() {
 	const { t } = useTranslation()
+	const TitleRef = useRef<HTMLInputElement>(null)
+	const ValueRef = useRef<HTMLTextAreaElement>(null)
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	function handlePost() {
+		console.log("Create Post")
+		if (TitleRef?.current) {
+			// console.log(TitleRef?.current.value)
+			// TitleRef.current.value = ""
+		}
+		if (ValueRef?.current) {
+			// console.log(ValueRef?.current.value)
+			// ValueRef.current.value = ""
+		}
+	}
 
 	return (
 		<div className="flex flex-col gap-4 items-start font-mono text-size-lg p-2">
@@ -168,20 +190,24 @@ export default function App() {
 				}}
 			>
 				<div
-					className="hover: cursor-pointer flex items-center gap-xs"
+					className="hover: cursor-pointer flex-col justify-between items-center gap-xs m-1"
 					style={{
+						height: "16rem",
 						padding: "0 1rem 0 0",
 						borderBottom: "1px solid #e5e7eb",
 						backgroundColor: "transparent",
 					}}
 				>
+					<div className="font-mono block pb-1">Create Post</div>
 					<input
-						className="font-mono"
-						placeholder="Create post"
+						className="font-mono block"
+						placeholder="Title"
+						ref={TitleRef}
 						style={{
-							height: "38px",
+							height: "36px",
+							width: "600px",
 							border: "1px solid #e5e7eb",
-							backgroundColor: "#F6F7F8",
+							backgroundColor: "#fff",
 							borderRadius: "4px",
 							color: "#1c1c1c",
 							boxShadow: "none",
@@ -190,14 +216,39 @@ export default function App() {
 							fontSize: "14px",
 						}}
 					></input>
-					<IconParkOutlineArrowLeft />
-					<ClaimBtn />
-					<CSBDetailBtn />
+					<br />
+					<div className="flex flex-wrap gap-2 items-center">
+						<textarea
+							className="font-mono block resize-none"
+							name=""
+							id=""
+							placeholder="Text"
+							ref={ValueRef}
+							style={{
+								height: "8rem",
+								border: "1px solid #e5e7eb",
+								backgroundColor: "#fff",
+								borderRadius: "4px",
+								color: "#1c1c1c",
+								boxShadow: "none",
+								outline: "none",
+								padding: "0 1rem",
+								fontSize: "14px",
+							}}
+						></textarea>
+						<NewPost
+							title={TitleRef?.current?.value || ""}
+							content={ValueRef?.current?.value || ""}
+							sources={["Flare"]}
+							externalUrls={["https://crossbell.io"]}
+							tags={["post"]}
+						></NewPost>
+						<ClaimBtn />
+						<CSBDetailBtn />
+					</div>
 				</div>
 				<ul className="flex gap-8xl justify-start">
-					<li>Best</li>
-					<li>Hot</li>
-					<li>New</li>
+					<li>Post</li>
 				</ul>
 				<div
 					style={{
