@@ -13,6 +13,7 @@ import { extractCharacterName } from "@crossbell/util-metadata"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { WagmiConfig } from "wagmi"
+import { usePostNote } from "@crossbell/connect-kit";
 
 const queryClient = new QueryClient()
 const wagmiConfig = createWagmiConfig({ appName: "Crossbell Dev" })
@@ -94,6 +95,27 @@ export function IconParkOutlineArrowLeft(props: any) {
 	)
 }
 
+export function NewPost() {
+	const postNote = usePostNote();
+
+	return (
+		<button
+			onClick={() => {
+				postNote.mutate({
+					metadata: {
+						content: "Hello Word!",
+						sources: ["Crossbell Dev"],
+						external_urls: ["https://crossbell.io"],
+						tags: ["post"],
+					},
+				});
+			}}
+		>
+			Post Note
+		</button>
+	);
+}
+
 export default function App() {
 	const { t } = useTranslation()
 
@@ -171,6 +193,7 @@ export default function App() {
 					<IconParkOutlineArrowLeft />
 					<ClaimBtn />
 					<CSBDetailBtn />
+					<NewPost />
 				</div>
 				<ul className="flex gap-8xl justify-start">
 					<li>Best</li>
