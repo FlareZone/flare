@@ -4,6 +4,9 @@ dependencies:
   '@crossbell/connect-kit':
     specifier: ^1.2.5
     version: 1.2.5(@tanstack/react-query@4.29.7)(@types/react@18.2.6)(react-dom@18.2.0)(typescript@5.0.4)(wagmi@1.0.6)
+  '@crossbell/ipfs-gateway':
+    specifier: ^0.0.19
+    version: 0.0.19
   '@crossbell/notification':
     specifier: ^1.3.0
     version: 1.3.0(@tanstack/react-query@4.29.7)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0)(typescript@5.0.4)(wagmi@1.0.6)
@@ -357,6 +360,21 @@ packages:
 
   /@crossbell/ipfs-fetch@0.0.19:
     resolution: {integrity: sha512-0Yf9+MMTSD+JJkFbNaK/s+kl3CXhr4oq2yj3K0dvheB+e8uykcpM7yomxHie/sr0ushw3G7Ppf5NXYkfH0eiSw==}
+    dev: false
+
+  /@crossbell/ipfs-gateway-sw@0.0.19:
+    resolution: {integrity: sha512-b7Tc+zgOGtvDqnlzalO1PZ+Okinq0RRpZQbbB4qoEoAa6X+uQsWqPTWYICYx/wnidR2St0g7u//73uWbDu6+cA==}
+    dependencies:
+      '@crossbell/ipfs-fetch': 0.0.19
+      escape-string-regexp: 5.0.0
+    dev: false
+
+  /@crossbell/ipfs-gateway@0.0.19:
+    resolution: {integrity: sha512-xj7SA7dbCogK77QuN4YwVjNXWSZ95lrqLbdx90acqkjgZHPASNwTXtM2VIXQZN9pfzluo3tjKhRJWBQ5RxeVcw==}
+    dependencies:
+      '@crossbell/ipfs-fetch': 0.0.19
+      '@crossbell/ipfs-gateway-sw': 0.0.19
+      query-string: 8.1.0
     dev: false
 
   /@crossbell/notification@1.3.0(@tanstack/react-query@4.29.7)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0)(typescript@5.0.4)(wagmi@1.0.6):
@@ -3719,6 +3737,11 @@ packages:
     engines: {node: '>=0.10'}
     dev: false
 
+  /decode-uri-component@0.4.1:
+    resolution: {integrity: sha512-+8VxcR21HhTy8nOt6jf20w0c9CADrw1O8d+VZ/YzzCt4bJ3uBjw+D1q2osAB8RnpwwaeYBxy0HyKQxD5JBMuuQ==}
+    engines: {node: '>=14.16'}
+    dev: false
+
   /deep-equal@2.2.1:
     resolution: {integrity: sha512-lKdkdV6EOGoVn65XaOsPdH4rMxTZOnmFyuIkMjM1i5HHCbfjC97dawgTAy0deYNfuqUqW+Q5VrVaQYtUpSd6yQ==}
     dependencies:
@@ -4052,6 +4075,11 @@ packages:
   /escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
+
+  /escape-string-regexp@5.0.0:
+    resolution: {integrity: sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==}
+    engines: {node: '>=12'}
+    dev: false
 
   /eslint-plugin-jsx-a11y@6.7.1(eslint@8.40.0):
     resolution: {integrity: sha512-63Bog4iIethyo8smBklORknVjB0T2dwB8Mr/hIC+fBS0uyHdYYpzM/Ed+YC8VxTjlXHEWFOdmgwcDn1U2L9VCA==}
@@ -4432,6 +4460,11 @@ packages:
   /filter-obj@1.1.0:
     resolution: {integrity: sha512-8rXg1ZnX7xzy2NGDVkBVaAy+lSlPNwad13BtgSlLuxfIslyt5Vg64U7tFcCt4WS1R0hvtnQybT/IyCkGZ3DpXQ==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /filter-obj@5.1.0:
+    resolution: {integrity: sha512-qWeTREPoT7I0bifpPUXtxkZJ1XJzxWtfoWWkdVGqa+eCr3SHW/Ocp89o8vLvbUuQnadybJpjOKu4V+RwO6sGng==}
+    engines: {node: '>=14.16'}
     dev: false
 
   /find-root@1.1.0:
@@ -5728,6 +5761,15 @@ packages:
       strict-uri-encode: 2.0.0
     dev: false
 
+  /query-string@8.1.0:
+    resolution: {integrity: sha512-BFQeWxJOZxZGix7y+SByG3F36dA0AbTy9o6pSmKFcFz7DAj0re9Frkty3saBn3nHo3D0oZJ/+rx3r8H8r8Jbpw==}
+    engines: {node: '>=14.16'}
+    dependencies:
+      decode-uri-component: 0.4.1
+      filter-obj: 5.1.0
+      split-on-first: 3.0.0
+    dev: false
+
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
@@ -6267,6 +6309,11 @@ packages:
   /split-on-first@1.1.0:
     resolution: {integrity: sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw==}
     engines: {node: '>=6'}
+    dev: false
+
+  /split-on-first@3.0.0:
+    resolution: {integrity: sha512-qxQJTx2ryR0Dw0ITYyekNQWpz6f8dGd7vffGNflQQ3Iqj9NJ6qiZ7ELpZsJ/QBhIVAiDfXdag3+Gp8RvWa62AA==}
+    engines: {node: '>=12'}
     dev: false
 
   /split2@4.2.0:
