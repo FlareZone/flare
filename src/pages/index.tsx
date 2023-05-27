@@ -117,9 +117,7 @@ export function NewPost(props: any) {
 					},
 				})
 			}}
-		>
-			<IconParkOutlineArrowLeft />
-		</button>
+		>New Post</button>
 	)
 }
 
@@ -243,6 +241,7 @@ export default function App() {
 							externalUrls={["https://crossbell.io"]}
 							tags={["post"]}
 						></NewPost>
+						<IconParkOutlineArrowLeft />
 						<ClaimBtn />
 						<CSBDetailBtn />
 					</div>
