@@ -1,6 +1,7 @@
 import AppearanceSwitch from "@/components/part/appearance-switch"
 import LanguageSwitch from "@/components/part/language-switch"
 import { ClaimBtn } from "@/pages/ClaimBtn"
+import { CharacterList } from "@/pages/feed"
 import {
 	ConnectButton,
 	ConnectKitProvider,
@@ -12,7 +13,7 @@ import {
 import { CharacterAvatar, SettingsMyCharacterIcon } from "@crossbell/ui"
 import { extractCharacterName } from "@crossbell/util-metadata"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { useRef, useState } from "react"
+import { SVGProps, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { WagmiConfig } from "wagmi"
 
@@ -75,6 +76,27 @@ export function CSBDetailBtn() {
 	)
 }
 
+export function BytesizeActivity(props: SVGProps<SVGSVGElement>) {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="1em"
+			height="1em"
+			viewBox="0 0 32 32"
+			{...props}
+		>
+			<path
+				fill="none"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="2"
+				d="M4 16h7l3 13l4-26l3 13h7"
+			></path>
+		</svg>
+	)
+}
+
 export function IconParkOutlineArrowLeft(props: any) {
 	return (
 		<svg
@@ -94,6 +116,19 @@ export function IconParkOutlineArrowLeft(props: any) {
 			></path>
 		</svg>
 	)
+}
+
+
+export function BytesizeHeart(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16C1 12 2 6 7 4s8 2 9 4c1-2 5-6 10-4s5 8 2 12s-12 12-12 12s-9-8-12-12Z"></path></svg>
+  )
+}
+
+export function BytesizeRedHeart(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" color="red" width="1em" height="1em" viewBox="0 0 32 32" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16C1 12 2 6 7 4s8 2 9 4c1-2 5-6 10-4s5 8 2 12s-12 12-12 12s-9-8-12-12Z"></path></svg>
+  )
 }
 
 export default function App() {
@@ -262,7 +297,10 @@ export default function App() {
 					</div>
 				</div>
 				<ul className="flex gap-8xl justify-start">
-					<li>Post</li>
+					<div className="flex gap-xs">
+						<li>New</li> <BytesizeActivity />
+					</div>
+					<CharacterList />
 				</ul>
 				<div
 					style={{
