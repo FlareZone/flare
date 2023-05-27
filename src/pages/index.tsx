@@ -114,7 +114,6 @@ export default function App() {
 		[key: string]: any
 	}) {
 		const postNote = usePostNote()
-		console.log(title, value)
 
 		return (
 			<button
@@ -140,13 +139,13 @@ export default function App() {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function handlePost() {
-		console.log("handlePost Create Post")
+		console.log("HandlePost Create Post")
 		if (TitleRef?.current) {
-			console.log(TitleRef?.current.value)
+			// console.log(TitleRef?.current.value)
 			// TitleRef.current.value = ""
 		}
 		if (ValueRef?.current) {
-			console.log(ValueRef?.current.value)
+			// console.log(ValueRef?.current.value)
 			// ValueRef.current.value = ""
 		}
 	}
