@@ -12,7 +12,7 @@ import {
 import { CharacterAvatar, SettingsMyCharacterIcon } from "@crossbell/ui"
 import { extractCharacterName } from "@crossbell/util-metadata"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { WagmiConfig } from "wagmi"
 
@@ -96,45 +96,57 @@ export function IconParkOutlineArrowLeft(props: any) {
 	)
 }
 
-export function NewPost(props: any) {
-	const postNote = usePostNote()
-
-	return (
-		<button
-			onClick={() => {
-				postNote.mutate({
-					metadata: {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-						title: props.title,
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-						content: props.content,
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-						sources: props.sources,
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-						external_urls: props.external_urls,
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-						tags: props.tags,
-					},
-				})
-			}}
-		>New Post</button>
-	)
-}
-
 export default function App() {
 	const { t } = useTranslation()
 	const TitleRef = useRef<HTMLInputElement>(null)
 	const ValueRef = useRef<HTMLTextAreaElement>(null)
 
+	const [title, setTitle] = useState("")
+	const [value, setValue] = useState("")
+
+	function NewPost({
+		title,
+		value,
+		...rest
+	}: {
+		title: string
+		value: string
+		[key: string]: any
+	}) {
+		const postNote = usePostNote()
+		console.log(title, value)
+
+		return (
+			<button
+				onClick={() => {
+					postNote.mutate({
+						metadata: {
+							title,
+							content: value,
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+							sources: rest.sources,
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+							external_urls: rest.externalUrls,
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+							tags: rest.tags,
+						},
+					})
+				}}
+			>
+				New Post
+			</button>
+		)
+	}
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function handlePost() {
-		console.log("Create Post")
+		console.log("handlePost Create Post")
 		if (TitleRef?.current) {
-			// console.log(TitleRef?.current.value)
+			console.log(TitleRef?.current.value)
 			// TitleRef.current.value = ""
 		}
 		if (ValueRef?.current) {
-			// console.log(ValueRef?.current.value)
+			console.log(ValueRef?.current.value)
 			// ValueRef.current.value = ""
 		}
 	}
@@ -198,6 +210,8 @@ export default function App() {
 				>
 					<div className="font-mono block pb-1">Create Post</div>
 					<input
+						value={title}
+						onChange={(e) => setTitle(e.target.value)}
 						className="font-mono block"
 						placeholder="Title"
 						ref={TitleRef}
@@ -217,6 +231,8 @@ export default function App() {
 					<br />
 					<div className="flex flex-wrap gap-2 items-center">
 						<textarea
+							value={value}
+							onChange={(e) => setValue(e.target.value)}
 							className="font-mono block resize-none"
 							name=""
 							id=""
@@ -236,12 +252,12 @@ export default function App() {
 						></textarea>
 						<NewPost
 							title={TitleRef?.current?.value || ""}
-							content={ValueRef?.current?.value || ""}
+							value={ValueRef?.current?.value || ""}
 							sources={["Flare"]}
 							externalUrls={["https://crossbell.io"]}
 							tags={["post"]}
-						></NewPost>
-						<IconParkOutlineArrowLeft />
+						/>
+						<IconParkOutlineArrowLeft onClick={handlePost} />
 						<ClaimBtn />
 						<CSBDetailBtn />
 					</div>
