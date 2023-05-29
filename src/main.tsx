@@ -27,7 +27,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 					ipfsLinkToHttpLink={ipfsLinkToHttpLink}
 					// Used for the case when we want to keep the user logged in even if the user disconnects from the wallet.
 					// ConnectKit will make sure to reconnect to the wallet if the user initiates a transaction.
-					ignoreWalletDisconnectEvent={true}
+					// ignoreWalletDisconnectEvent={true}
 				>
 					<IpfsGatewayContext.Provider value={ipfsGateway}>
 						<QueryClientProvider client={queryClient} contextSharing={true}>
