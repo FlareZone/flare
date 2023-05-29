@@ -118,17 +118,47 @@ export function IconParkOutlineArrowLeft(props: any) {
 	)
 }
 
-
 export function BytesizeHeart(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16C1 12 2 6 7 4s8 2 9 4c1-2 5-6 10-4s5 8 2 12s-12 12-12 12s-9-8-12-12Z"></path></svg>
-  )
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="1em"
+			height="1em"
+			viewBox="0 0 32 32"
+			{...props}
+		>
+			<path
+				fill="none"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="2"
+				d="M4 16C1 12 2 6 7 4s8 2 9 4c1-2 5-6 10-4s5 8 2 12s-12 12-12 12s-9-8-12-12Z"
+			></path>
+		</svg>
+	)
 }
 
 export function BytesizeRedHeart(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" color="red" width="1em" height="1em" viewBox="0 0 32 32" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16C1 12 2 6 7 4s8 2 9 4c1-2 5-6 10-4s5 8 2 12s-12 12-12 12s-9-8-12-12Z"></path></svg>
-  )
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			color="red"
+			width="1em"
+			height="1em"
+			viewBox="0 0 32 32"
+			{...props}
+		>
+			<path
+				fill="none"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="2"
+				d="M4 16C1 12 2 6 7 4s8 2 9 4c1-2 5-6 10-4s5 8 2 12s-12 12-12 12s-9-8-12-12Z"
+			></path>
+		</svg>
+	)
 }
 
 export default function App() {
@@ -138,6 +168,9 @@ export default function App() {
 
 	const [title, setTitle] = useState("")
 	const [value, setValue] = useState("")
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [isChecked, setIsChecked] = useState(false)
+	const [gambling, setGambling] = useState("")
 
 	function NewPost({
 		title,
@@ -165,6 +198,11 @@ export default function App() {
 							tags: rest.tags,
 						},
 					})
+					// isChecked  gambling
+					// Do gambling here
+					if (isChecked) {
+						// Do cell contract
+					}
 				}}
 			>
 				New Post
@@ -183,6 +221,22 @@ export default function App() {
 			// console.log(ValueRef?.current.value)
 			// ValueRef.current.value = ""
 		}
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	function RadioComponent() {
+		const handleRadioClick = () => {
+			setIsChecked(!isChecked)
+		}
+
+		return (
+			<input
+				type="radio"
+				checked={isChecked}
+				onClick={handleRadioClick}
+				onChange={() => {}}
+			/>
+		)
 	}
 
 	return (
@@ -294,6 +348,28 @@ export default function App() {
 						<IconParkOutlineArrowLeft onClick={handlePost} />
 						<ClaimBtn />
 						<CSBDetailBtn />
+						<div className="flex gap-1 items-center">
+							gambling:
+							<input
+								value={gambling}
+								onChange={(e) => setGambling(e.target.value)}
+								className="font-mono block"
+								placeholder="Value like 0.1"
+								style={{
+									height: "36px",
+									width: "10rem",
+									border: "1px solid #e5e7eb",
+									backgroundColor: "#fff",
+									borderRadius: "4px",
+									color: "#1c1c1c",
+									boxShadow: "none",
+									outline: "none",
+									padding: "0 1rem",
+									fontSize: "14px",
+								}}
+							/>
+							<RadioComponent />
+						</div>
 					</div>
 				</div>
 				<ul className="flex gap-8xl justify-start">
