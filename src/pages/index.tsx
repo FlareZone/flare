@@ -205,7 +205,7 @@ export default function App() {
 					}
 				}}
 			>
-				New Post
+				Do Post
 			</button>
 		)
 	}
@@ -296,7 +296,7 @@ export default function App() {
 						backgroundColor: "transparent",
 					}}
 				>
-					<div className="font-mono block pb-1">Create Post</div>
+					<div className="font-mono block pb-1 pl-2">Create Post</div>
 					<input
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
@@ -349,7 +349,7 @@ export default function App() {
 						<ClaimBtn />
 						<CSBDetailBtn />
 						<div className="flex gap-1 items-center">
-							gambling:
+							Gambling:
 							<input
 								value={gambling}
 								onChange={(e) => setGambling(e.target.value)}
@@ -372,9 +372,9 @@ export default function App() {
 						</div>
 					</div>
 				</div>
-				<ul className="flex gap-8xl justify-start">
+				<ul className="flex gap-8xl justify-start w-6xl pl-4">
 					<div className="flex gap-xs">
-						<li>New</li> <BytesizeActivity />
+						<li>Following</li> <BytesizeActivity />
 					</div>
 					<CharacterList />
 				</ul>
