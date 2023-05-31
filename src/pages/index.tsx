@@ -1,5 +1,5 @@
 import AppearanceSwitch from "@/components/part/appearance-switch"
-import { Contract, providers } from "ethers";
+import { ethers, providers } from "ethers";
 import Web3Modal from "web3modal";
 import LanguageSwitch from "@/components/part/language-switch"
 import { ClaimBtn } from "@/pages/ClaimBtn"
@@ -201,7 +201,7 @@ function convertTimeToSeconds(timeString:any) {
   return seconds;
 }
 
-export default async function App() {
+export default function App() {
 	const { t } = useTranslation()
 	const TitleRef = useRef<HTMLInputElement>(null)
 	const ValueRef = useRef<HTMLTextAreaElement>(null)
@@ -215,6 +215,7 @@ export default async function App() {
 	const character = useAccountCharacter()
 	const web3ModalRef = useRef<Web3Modal>();
 
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
  const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
@@ -241,8 +242,22 @@ export default async function App() {
     return web3Provider;
   };
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	const signer = await getProviderOrSigner(true);
+const Provider = ()=>{
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  return new ethers.providers.Web3Provider(window.ethereum)
+}
+
+const Conctract = ()=>{
+  // 导入签名
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const signer = Provider().getSigner()
+  // 获取合约，参数：contractAddress、contractABI、signer
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const Contract = new ethers.Contract(contractAddress, contractABI, signer)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return Contract;
+}
+
 
 	function NewPost({
 		title,
@@ -292,7 +307,8 @@ export default async function App() {
 										console.log('Get the account owner success✅:', character ? character.owner: "");
 										void fetch(url)
 											.then((response) => response.json())
-											.then((data) => {
+											// eslint-disable-next-line @typescript-eslint/require-await
+											.then(async (data) => {
 												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 												console.log("characterId:", data.list[0].characterId, "noteId:", data.list[0].noteId)
 												// characterId, noteId
@@ -304,13 +320,50 @@ export default async function App() {
 												// contract.methods
 												// .publishPost(postId, _isBet, _betAmount, _duration)
 												// .send({ from: `${character ? character.owner : "0x"}` })
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+												// const signer = await getProviderOrSigner(true);
 												// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-												const SignerContract = new Contract(contractAddress,contractABI,signer);
+												// const SignerContract = new Contract(contractAddress,contractABI,signer);
 												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-												SignerContract.publishPost({
-													postId, _isBet, _betAmount, _duration
-												})
+												// SignerContract.publishPost({
+												// 	postId, _isBet, _betAmount, _duration
+												// })
+												// 发起交易
 												// const txObject = {
+												// 	from: `${character ? character.owner : "0x"}`,
+												// 	to: contractAddress,
+												// 	gas: 200000,
+												// 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+												// 	data: contract.methods.publishPost(postId, _isBet, _betAmount, _duration).encodeABI()
+												// };
+												// void web3.eth.sendTransaction(txObject).on("transactionHash", (hash) => {console.log("Transaction hash:", hash);})
+
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+												// contract.methods.publishPost(postId, _isBet, _betAmount, _duration)
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+												// await Provider().send("eth_requestAccounts",[])
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+												const chainId = 65;
+												const hexChainId = "0x" + chainId.toString(16);
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+												window.ethereum && window.ethereum.request({
+														method: 'wallet_switchEthereumChain',
+														params: [
+															{
+																chainId: hexChainId
+															},
+													]})
+												let FlareContract:any
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+												window.ethereum.on("chainChanged", (chainId: any) => {
+													console.log("chainId:", chainId)
+													// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+													FlareContract = Conctract()
+													})
+												await new Promise(resolve => setTimeout(resolve, 8000));
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+												await FlareContract.publishPost(postId, _isBet, _betAmount, _duration)
+
 												// 	from: `${character ? character.owner : "0x"}`,
 												// 	to: contractAddress,
 												// 	gas: 200000,
