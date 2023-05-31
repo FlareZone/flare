@@ -26,7 +26,7 @@ import contractABI from "./contractABI.json"
 
 const web3 = new Web3("https://exchaintestrpc.okex.org")
 
-const contractAddress = "0xce475A7b4A85B10530fc24AE13B1Dd00657A98ae"
+const contractAddress = "0xc0743E95F5CBe516bD7a90E8a4B8946185ccB750"
 
 const contract = new web3.eth.Contract(
 	contractABI as AbiItem[],
