@@ -1,4 +1,6 @@
 import AppearanceSwitch from "@/components/part/appearance-switch"
+import { Contract, providers } from "ethers";
+import Web3Modal from "web3modal";
 import LanguageSwitch from "@/components/part/language-switch"
 import { ClaimBtn } from "@/pages/ClaimBtn"
 import { CharacterList } from "@/pages/feed"
@@ -6,9 +8,10 @@ import {
 	ConnectButton,
 	ConnectKitProvider,
 	createWagmiConfig,
+	useAccountCharacter,
 	useCsbDetailModal,
 	useIsConnected,
-	usePostNote,
+	usePostNote
 } from "@crossbell/connect-kit"
 import { CharacterAvatar, SettingsMyCharacterIcon } from "@crossbell/ui"
 import { extractCharacterName } from "@crossbell/util-metadata"
@@ -16,6 +19,22 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { SVGProps, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { WagmiConfig } from "wagmi"
+
+import Web3 from "web3"
+import { AbiItem } from "web3-utils"
+import contractABI from "./contractABI.json"
+
+const web3 = new Web3("https://exchaintestrpc.okex.org")
+
+const contractAddress = "0xce475A7b4A85B10530fc24AE13B1Dd00657A98ae"
+
+const contract = new web3.eth.Contract(
+	contractABI as AbiItem[],
+	contractAddress
+)
+
+// contract object is ready to use
+console.log("Get contract.methods success✅:", contract.methods)
 
 const queryClient = new QueryClient()
 const wagmiConfig = createWagmiConfig({ appName: "Crossbell Dev" })
@@ -161,48 +180,149 @@ export function BytesizeRedHeart(props: SVGProps<SVGSVGElement>) {
 	)
 }
 
-export default function App() {
+function convertTimeToSeconds(timeString:any) {
+  const regex = /(\d+)\s*(h|m|s)/g;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  let match = regex.exec(timeString);
+  let seconds = 0;
+  while (match != null) {
+    const value = parseInt(match[1]);
+    const unit = match[2];
+    if (unit === 'h') {
+      seconds += value * 60 * 60;
+    } else if (unit === 'm') {
+      seconds += value * 60;
+    } else if (unit === 's') {
+      seconds += value;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    match = regex.exec(timeString);
+  }
+  return seconds;
+}
+
+export default async function App() {
 	const { t } = useTranslation()
 	const TitleRef = useRef<HTMLInputElement>(null)
 	const ValueRef = useRef<HTMLTextAreaElement>(null)
 
 	const [title, setTitle] = useState("")
 	const [value, setValue] = useState("")
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isChecked, setIsChecked] = useState(false)
 	const [gambling, setGambling] = useState("")
+	const [Duration, setDuration] = useState("")
+
+	const character = useAccountCharacter()
+	const web3ModalRef = useRef<Web3Modal>();
+
+ const getProviderOrSigner = async (needSigner = false) => {
+    // Connect to Metamask
+    // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const provider = await web3ModalRef.current?.connect();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const web3Provider = new providers.Web3Provider(provider);
+
+    // If user is not connected to the Goerli network, let them know and throw an error
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const { chainId } = await web3Provider.getNetwork();
+    if (chainId !== 65) {
+      window.alert("Change the network to OKEX");
+      throw new Error("Change network to OKEX");
+    }
+
+    if (needSigner) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      const signer = web3Provider.getSigner();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return signer;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return web3Provider;
+  };
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	const signer = await getProviderOrSigner(true);
 
 	function NewPost({
 		title,
 		value,
-		...rest
+		sources,
+		externalUrls,
+		tags,
+		isChecked = false,
 	}: {
 		title: string
 		value: string
-		[key: string]: any
+		sources: string[]
+		externalUrls: string[]
+		tags: string[]
+		isChecked?: boolean
 	}) {
 		const postNote = usePostNote()
 
 		return (
 			<button
 				onClick={() => {
-					postNote.mutate({
-						metadata: {
-							title,
-							content: value,
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-							sources: rest.sources,
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-							external_urls: rest.externalUrls,
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-							tags: rest.tags,
+					console.log("isChecked:", isChecked)
+					const newSources = isChecked ? [...sources, "gambling"] : sources
+					postNote.mutate(
+						{
+							metadata: {
+								title,
+								content: value,
+								sources: newSources,
+								external_urls: externalUrls,
+								tags,
+							},
 						},
-					})
-					// isChecked  gambling
-					// Do gambling here
-					if (isChecked) {
-						// Do cell contract
-					}
+						{
+							onSuccess: () => {
+								if (isChecked) {
+									// Do cell contract
+									// 判断Gambling, 开启对赌.
+									if (gambling) {
+										// 开启对赌, 调用对赌合约.
+										console.log("Gambling value:", gambling)
+										// 获取自己最新的帖子, 并对使用帖子的id发起对赌.
+										const url = `https://indexer.crossbell.io/v1/notes?characterId=${
+											character ? character.characterId : "40943"
+										}&limit=20`
+										// owner
+										console.log('Get the account owner success✅:', character ? character.owner: "");
+										void fetch(url)
+											.then((response) => response.json())
+											.then((data) => {
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+												console.log("characterId:", data.list[0].characterId, "noteId:", data.list[0].noteId)
+												// characterId, noteId
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
+												const postId = `${data.list[0].characterId}${data.list[0].noteId}`;
+												const _isBet  = isChecked
+												const _betAmount  = web3.utils.toWei(gambling, 'Gwei')
+												const _duration = convertTimeToSeconds(Duration)
+												// contract.methods
+												// .publishPost(postId, _isBet, _betAmount, _duration)
+												// .send({ from: `${character ? character.owner : "0x"}` })
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+												const SignerContract = new Contract(contractAddress,contractABI,signer);
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+												SignerContract.publishPost({
+													postId, _isBet, _betAmount, _duration
+												})
+												// const txObject = {
+												// 	from: `${character ? character.owner : "0x"}`,
+												// 	to: contractAddress,
+												// 	gas: 200000,
+												// 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+												// 	data: contract.methods.publishPost(postId, _isBet, _betAmount, _duration).encodeABI()
+												// };
+											})
+									}
+								}
+							},
+						}
+					)
 				}}
 			>
 				Do Post
@@ -344,6 +464,7 @@ export default function App() {
 							sources={["Flare"]}
 							externalUrls={["https://crossbell.io"]}
 							tags={["post"]}
+							isChecked={isChecked}
 						/>
 						<IconParkOutlineArrowLeft onClick={handlePost} />
 						<ClaimBtn />
@@ -358,6 +479,24 @@ export default function App() {
 								style={{
 									height: "36px",
 									width: "10rem",
+									border: "1px solid #e5e7eb",
+									backgroundColor: "#fff",
+									borderRadius: "4px",
+									color: "#1c1c1c",
+									boxShadow: "none",
+									outline: "none",
+									padding: "0 1rem",
+									fontSize: "14px",
+								}}
+							/>
+							<input
+								value={Duration}
+								onChange={(e) => setDuration(e.target.value)}
+								className="font-mono block"
+								placeholder="Duration 1h"
+								style={{
+									height: "36px",
+									width: "8rem",
 									border: "1px solid #e5e7eb",
 									backgroundColor: "#fff",
 									borderRadius: "4px",

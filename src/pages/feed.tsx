@@ -5,6 +5,7 @@ import { useWeb2Url } from "@crossbell/ui"
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BytesizeHeart, BytesizeRedHeart } from "@/pages"
 import {
+	useAccountCharacter,
 	useIsNoteLiked,
 	useNoteLikeCount,
 	useToggleLikeNote,
@@ -71,6 +72,7 @@ export function Header(props: { metadata?: any }) {
 
 export function CharacterList() {
 	const [characters, setCharacters] = useState<Character[]>([])
+	const character = useAccountCharacter()
 
 	interface Props {
 		noteId: number
@@ -120,10 +122,12 @@ export function CharacterList() {
 	}
 
 	useEffect(() => {
+
 		async function getCharacters() {
+			// {character ? `${character.characterId}` : "40943"}
 			try {
 				const res = await fetch(
-					`https://indexer.crossbell.io/v1/characters/40943/feed/follow?type=LINK&type=POST_NOTE&type=POST_NOTE_FOR_ANY_URI&type=POST_NOTE_FOR_NOTE&limit=20`
+					`https://indexer.crossbell.io/v1/characters/${character ? character.characterId : "40943"}/feed/follow?type=LINK&type=POST_NOTE&type=POST_NOTE_FOR_ANY_URI&type=POST_NOTE_FOR_NOTE&limit=20`
 				)
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				const data = await res.json()
