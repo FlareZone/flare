@@ -1,7 +1,10 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useWeb2Url } from "@crossbell/ui"
+import { ethers } from "ethers";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BytesizeHeart, BytesizeRedHeart } from "@/pages"
 import {
@@ -11,8 +14,16 @@ import {
 	useToggleLikeNote,
 } from "@crossbell/connect-kit"
 import { SVGProps, useEffect, useState } from "react"
+
+import Web3 from "web3"
+const web3 = new Web3("https://exchaintestrpc.okex.org")
+
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+
+import contractABI from "./contractABI.json"
+
+const contractAddress = "0xc0743E95F5CBe516bD7a90E8a4B8946185ccB750"
 
 interface Character {
 	metadata: any
@@ -69,10 +80,25 @@ export function Header(props: { metadata?: any }) {
   );
 }
 
-
 export function CharacterList() {
 	const [characters, setCharacters] = useState<Character[]>([])
 	const character = useAccountCharacter()
+
+const Provider = ()=>{
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  return new ethers.providers.Web3Provider(window.ethereum)
+}
+
+const Bet = ()=>{
+  // 导入签名
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const signer = Provider().getSigner()
+  // 获取合约，参数：contractAddress、contractABI、signer
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const Contract = new ethers.Contract(contractAddress, contractABI, signer)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return Contract;
+}
 
 	interface Props {
 		noteId: number
@@ -151,8 +177,41 @@ export function CharacterList() {
 				<div
 					key={character.noteId}
 					className="flex py-6 border-b border-gray/20 cursor-pointer flex-row gap-xl items-start w-full items-center"
-					style={{ height: "auto"}}
+					style={{ height: "auto" }}
+				// eslint-disable-next-line react/jsx-no-comment-textnodes
 				>
+					{character.note?.metadata?.content?.sources && character.note.metadata.content.sources.includes("gambling") ? (
+						// eslint-disable-next-line jsx-a11y/no-static-element-interactions, @typescript-eslint/no-misused-promises, @typescript-eslint/require-await
+						<div onClick={() => {
+						const chainId = 65;
+						const hexChainId = "0x" + chainId.toString(16);
+						window.ethereum && window.ethereum.request({
+							method: 'wallet_switchEthereumChain',
+							params: [
+						{
+							chainId: hexChainId
+						},
+						]})
+						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+						let BetContract:any;
+						window.ethereum.on("chainChanged", (chainId: any) => {
+							console.log("chainId:", chainId)
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+							BetContract = Bet()
+						})
+
+						BetContract = Bet()
+
+						const postId = `${character.characterId}${character.noteId}`
+						// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await
+						BetContract.betAmount(postId).then(async (amount: any) => {
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+							const payableAmount = web3.utils.fromWei(String(amount), "ether")
+							console.log("payableAmount:", payableAmount, "postId:", postId)
+							// FIXME index.ts:269 Uncaught (in promise) Error: too many arguments: passed to contract (count=2, expectedCount=1, code=UNEXPECTED_ARGUMENT, version=contracts/5.7.0)
+							BetContract.Participate(payableAmount, postId)
+						})
+					}}>Bet</div>) : ""}
 					<Header metadata={character} />
 					<IsNoteLiked
 						noteId={character.noteId}
@@ -191,7 +250,7 @@ export function CharacterList() {
 						)}
 					</div>
 					<p className="overflow-hidden text-ellipsis markdown-renderer overflow-hidden transition-all-200 break-all max-h-500px w-auto">
-						{character.note?.metadata?.content?.content.length < 160 ? (
+						{character.note?.metadata?.content?.content.length < 80 ? (
 							<ReactMarkdown remarkPlugins={[remarkGfm]}>
 								{character.note?.metadata?.content?.content}
 							</ReactMarkdown>
