@@ -15,8 +15,8 @@ import {
 } from "@crossbell/connect-kit"
 import { SVGProps, useEffect, useState } from "react"
 
-import Web3 from "web3"
-const web3 = new Web3("https://exchaintestrpc.okex.org")
+// import Web3 from "web3"
+// const web3 = new Web3("https://exchaintestrpc.okex.org")
 
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -85,7 +85,7 @@ export function CharacterList() {
 	const character = useAccountCharacter()
 
 const Provider = ()=>{
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
   return new ethers.providers.Web3Provider(window.ethereum)
 }
 
@@ -205,11 +205,12 @@ const Bet = ()=>{
 						const postId = `${character.characterId}${character.noteId}`
 						// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await
 						BetContract.betAmount(postId).then(async (amount: any) => {
+							console.log("amount:", amount);
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-							const payableAmount = web3.utils.fromWei(String(amount), "ether")
-							console.log("payableAmount:", payableAmount, "postId:", postId)
+							// const payableAmount = web3.utils.fromWei(amount.toString(), "ether")
+							// console.log("payableAmount:", payableAmount, "postId:", postId)
 							// FIXME index.ts:269 Uncaught (in promise) Error: too many arguments: passed to contract (count=2, expectedCount=1, code=UNEXPECTED_ARGUMENT, version=contracts/5.7.0)
-							BetContract.Participate(payableAmount, postId)
+							BetContract.Participate( postId, { value: amount } )
 						})
 					}}>Bet</div>) : ""}
 					<Header metadata={character} />
