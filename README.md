@@ -2,6 +2,8 @@
 
 [how to use](https://github.com/FlareZone/flare_app/edit/main/how_to_use.md)
 
+contact us [Discord](https://discord.gg/7MM8k5H6w8) [Twitter](https://twitter.com/Flare_dapp)
+
 use Vite
 
 and recommend you to use [taze](https://github.com/antfu/taze) and [ni](https://github.com/antfu/ni) that are tools for managing your dependencies.
