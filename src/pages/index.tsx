@@ -221,7 +221,7 @@ export default function App() {
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const provider = await web3ModalRef.current?.connect();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
     const web3Provider = new providers.Web3Provider(provider);
 
     // If user is not connected to the Goerli network, let them know and throw an error
@@ -243,7 +243,7 @@ export default function App() {
   };
 
 const Provider = ()=>{
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
   return new ethers.providers.Web3Provider(window.ethereum)
 }
 
@@ -315,7 +315,9 @@ const Conctract = ()=>{
 												// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
 												const postId = `${data.list[0].characterId}${data.list[0].noteId}`;
 												const _isBet  = isChecked
-												const _betAmount  = web3.utils.toWei(gambling, 'Gwei')
+												// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+												const _betAmount  = web3.utils.toWei(gambling, 'ether');
+												console.log("_betAmount:", _betAmount);
 												const _duration = convertTimeToSeconds(Duration)
 												// contract.methods
 												// .publishPost(postId, _isBet, _betAmount, _duration)
