@@ -165,7 +165,7 @@ const Bet = ()=>{
 			}
 		}
 		getCharacters().catch(console.error)
-	}, [])
+	}, [character])
 
 	if (characters.length === 0) {
 		return <div>Loading...</div>
