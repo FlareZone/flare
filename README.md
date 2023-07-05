@@ -2,7 +2,7 @@
 
 [how to use](https://github.com/FlareZone/flare_app/edit/main/how_to_use.md)
 
-contact us [Discord](https://discord.gg/9a48BTsNkC) [Twitter](https://twitter.com/Flare_dapp)
+contact us [Discord](https://discord.gg/9a48BTsNkC) [Twitter](https://twitter.com/flaredapp)
 
 use Vite
 
